@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class helicopterMovement : MonoBehaviour
 {
     [SerializeField] private float thurst = 1f;
-    private float tiltAngle = 60f;
+    private float tiltAngle = 60f, roterVolume;
     private Rigidbody2D rigidbody2D;
     private PlayerInput PlayerInput;
     private InputAction moveAction;
@@ -24,6 +24,7 @@ public class helicopterMovement : MonoBehaviour
     void Update()
     { 
         currentVector = moveAction.ReadValue<Vector2>();
+        roterVolume = currentVector.x;
         Debug.Log(currentVector);
         ManageHelicopterTilt();
         ManageVerticalBehavior();
@@ -43,6 +44,8 @@ public class helicopterMovement : MonoBehaviour
     { 
         rigidbody2D.AddForce(new Vector2(0, currentVector.y) * thurst, ForceMode2D.Force);
     }
+    
+    private void 
 
     
 }
