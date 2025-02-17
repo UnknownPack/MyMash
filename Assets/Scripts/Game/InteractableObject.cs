@@ -22,5 +22,6 @@ public abstract class InteractableObject : MonoBehaviour
 
     private protected void OnTriggerEnter2D(Collider2D other)
     {
+        
     }
 }
