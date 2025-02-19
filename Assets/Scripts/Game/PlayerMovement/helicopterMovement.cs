@@ -12,17 +12,42 @@ public class helicopterMovement : MonoBehaviour
     [SerializeField] private float shiftDuration = 15f;
     [SerializeField] private float roterVolume = 0.0f;
     [SerializeField] float thurst = 1f;
+    [SerializeField] float maxSpeed = 4f;
+
+    [Header("Inventory")] 
+    [SerializeField] private int maxPassengerCapactiy;
+    [SerializeField] private bool[] currentPassengerCapactiy;
+    [SerializeField] private int maxFlaresCapactiy;
+    [SerializeField] private bool[] currentFlaresCapactiy; 
     
+    [Header("Abilites")]
+    [SerializeField] private float flareDuration = 6f;
+
+    private bool canDeployFlare;
+    private bool scrambled;
+    private bool onBase = false;
+    private GameObject onSoldier;
+
     private Rigidbody2D rigidbody2D;
+    private GameStateManager gameStateManager;
     private PlayerInput PlayerInput;
-    private InputAction moveAction;
+    private InputAction moveAction, flareAction, depositAction;
     private Vector2 currentVector;
     // Start is called before the first frame update
     void Start()
     {
         PlayerInput = GetComponent<PlayerInput>();
         rigidbody2D = GetComponent<Rigidbody2D>();
+        gameStateManager = FindObjectOfType<GameStateManager>();
+        
         moveAction = PlayerInput.actions.FindAction("Move");
+        flareAction = PlayerInput.actions.FindAction("Flare");
+        depositAction = PlayerInput.actions.FindAction("Deposit");
+        flareAction.performed += OnFlareAction;
+        depositAction.performed += OnDepositAction;
+        
+        currentPassengerCapactiy = new bool[maxPassengerCapactiy];
+        currentFlaresCapactiy = new bool[maxFlaresCapactiy]; 
     }
 
     // Update is called once per frame
@@ -31,8 +56,17 @@ public class helicopterMovement : MonoBehaviour
         currentVector = moveAction.ReadValue<Vector2>(); 
         roterVolume = currentVector.magnitude; 
         rigidbody2D.AddForce(transform.up * (thurst * currentVector.y));  
-        TiltAngle(); 
+        TiltAngle();     
+        //Debug.Log(rigidbody2D.velocity);
     } 
+    
+    void FixedUpdate()
+    { 
+        if (rigidbody2D.velocity.magnitude > maxSpeed)
+        {
+            rigidbody2D.velocity = rigidbody2D.velocity.normalized * maxSpeed;
+        }
+    }
 
     private void TiltAngle()
     {
@@ -50,6 +84,78 @@ public class helicopterMovement : MonoBehaviour
         // Smoothly interpolate to the target angle
         Quaternion targetRotation = Quaternion.Euler(0, 0, clamp * 10f);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * shiftDuration); 
-    } 
+    }
+    
+    private void OnFlareAction(InputAction.CallbackContext context) { StartCoroutine(DeployFlare()); } 
+    private void OnDepositAction(InputAction.CallbackContext context)
+    {
+        if(onBase)
+        {
+            gameStateManager.AddScore(getCurrentContainerCapacity(currentPassengerCapactiy));
+            
+            // Play sound effect here
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        onBase = other.CompareTag("Base");
+        if (other.CompareTag("Soldier"))
+        {
+            if(!isContainerFull(currentPassengerCapactiy))
+            { 
+                fillContainer(currentPassengerCapactiy);
+                Destroy(other.gameObject); 
+            }
+        } 
+    }
+
+    private bool isContainerFull(bool[] container)
+    {
+        foreach (var content in container)
+        {
+            if(content == false) 
+                return false;
+        }
+        return true;
+    }
+
+    private void fillContainer(bool[] container)
+    {
+        for (int i = 0; i < container.Length; i++)
+        {
+            if (container[i] == false)
+            {
+                container[i] = true;
+                return;
+            } 
+        }
+    }
+
+    private int getCurrentContainerCapacity(bool[] container)
+    {
+        int capacity = 0;
+        foreach (var content in container)
+        {
+            if(content == true)
+                capacity++;
+        }
+        return capacity;
+    }
+
+    IEnumerator DeployFlare()
+    {
+        scrambled = true;
+        //emmit particles here
+        yield return new WaitForSeconds(flareDuration);
+        scrambled = false;
+    }
+    
+    void OnDestroy()
+    {
+        flareAction.performed -= OnFlareAction;
+        depositAction.performed -= OnDepositAction;
+        gameStateManager.PlayerFailed();
+    }
  
 }

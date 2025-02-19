@@ -6,7 +6,7 @@
             "id": "13c396f5-cda8-4ea1-8ee4-88f508f5e5da",
             "actions": [
                 {
-                    "name": "PickUp",
+                    "name": "Deposit",
                     "type": "PassThrough",
                     "id": "4a606ef6-3d39-4790-93fc-c349ba6a0bb5",
                     "expectedControlType": "Button",
@@ -37,18 +37,18 @@
                 {
                     "name": "",
                     "id": "63b7ee6b-2e07-401d-8e31-b9b7ac36f45b",
-                    "path": "",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "PickUp",
+                    "action": "Deposit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "e8165727-bae6-47b2-8654-db02ef7194d2",
-                    "path": "",
+                    "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

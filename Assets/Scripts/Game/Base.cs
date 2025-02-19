@@ -21,5 +21,10 @@ public class Base : InteractableObject
     {
         throw new NotImplementedException();
     }
+
+    public void DepositSoliders()
+    {
+        
+    }
     
 }
