@@ -38,7 +38,7 @@ public class GameStateManager : MonoBehaviour
     IEnumerator endGameCoroutine()
     {
         yield return null;
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
     }
      
 }

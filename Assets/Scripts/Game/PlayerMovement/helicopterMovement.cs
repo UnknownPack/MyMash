@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class helicopterMovement : MonoBehaviour
 {
@@ -31,7 +32,7 @@ public class helicopterMovement : MonoBehaviour
     private Rigidbody2D rigidbody2D;
     private GameStateManager gameStateManager;
     private PlayerInput PlayerInput;
-    private InputAction moveAction, flareAction, depositAction;
+    private InputAction moveAction, flareAction, depositAction, restartAction;
     private Vector2 currentVector;
     // Start is called before the first frame update
     void Start()
@@ -43,8 +44,10 @@ public class helicopterMovement : MonoBehaviour
         moveAction = PlayerInput.actions.FindAction("Move");
         flareAction = PlayerInput.actions.FindAction("Flare");
         depositAction = PlayerInput.actions.FindAction("Deposit");
+        restartAction = PlayerInput.actions.FindAction("Restart");
         flareAction.performed += OnFlareAction;
         depositAction.performed += OnDepositAction; 
+        restartAction.performed += OnRestartAction;
     }
 
     // Update is called once per frame
@@ -96,6 +99,7 @@ public class helicopterMovement : MonoBehaviour
             // Play sound effect here
         }
     }
+    private void OnRestartAction(InputAction.CallbackContext context){ SceneManager.LoadScene(1); }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
