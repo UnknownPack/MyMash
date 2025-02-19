@@ -5,6 +5,9 @@ using UnityEngine.SceneManagement;
 public class GameStateManager : MonoBehaviour
 {
     public static GameStateManager Instance { get; private set; }
+    public int minNumOfSoldiers = 3;
+    public int maxNumOfSoldiers = 7;
+    public int soldierToWin  { get; private set; }
     private int playerScore = 0; 
     private bool playerWon = false;
 
@@ -12,11 +15,15 @@ public class GameStateManager : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+        
+        soldierToWin = Random.Range(minNumOfSoldiers, maxNumOfSoldiers);
     }
 
     private void Update()
     {
-        //if (playerScore >= 3)  
+        //if (playerScore >= soldierToWin)  
+        
+        
          
     }
     

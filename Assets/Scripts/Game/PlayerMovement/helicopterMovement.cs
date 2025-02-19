@@ -16,9 +16,9 @@ public class helicopterMovement : MonoBehaviour
 
     [Header("Inventory")] 
     [SerializeField] private int maxPassengerCapactiy;
-    [SerializeField] private bool[] currentPassengerCapactiy;
+    [SerializeField] private int currentPassengerCapactiy = 0;
     [SerializeField] private int maxFlaresCapactiy;
-    [SerializeField] private bool[] currentFlaresCapactiy; 
+    [SerializeField] private int currentFlaresCapactiy = 0; 
     
     [Header("Abilites")]
     [SerializeField] private float flareDuration = 6f;
@@ -44,10 +44,7 @@ public class helicopterMovement : MonoBehaviour
         flareAction = PlayerInput.actions.FindAction("Flare");
         depositAction = PlayerInput.actions.FindAction("Deposit");
         flareAction.performed += OnFlareAction;
-        depositAction.performed += OnDepositAction;
-        
-        currentPassengerCapactiy = new bool[maxPassengerCapactiy];
-        currentFlaresCapactiy = new bool[maxFlaresCapactiy]; 
+        depositAction.performed += OnDepositAction; 
     }
 
     // Update is called once per frame
@@ -91,8 +88,8 @@ public class helicopterMovement : MonoBehaviour
     {
         if(onBase)
         {
-            gameStateManager.AddScore(getCurrentContainerCapacity(currentPassengerCapactiy));
-            
+            gameStateManager.AddScore(currentPassengerCapactiy);
+            currentPassengerCapactiy = 0;
             // Play sound effect here
         }
     }
@@ -102,46 +99,13 @@ public class helicopterMovement : MonoBehaviour
         onBase = other.CompareTag("Base");
         if (other.CompareTag("Soldier"))
         {
-            if(!isContainerFull(currentPassengerCapactiy))
-            { 
-                fillContainer(currentPassengerCapactiy);
+            if(currentPassengerCapactiy < maxPassengerCapactiy )
+            {
+                currentPassengerCapactiy++;
                 Destroy(other.gameObject); 
             }
         } 
-    }
-
-    private bool isContainerFull(bool[] container)
-    {
-        foreach (var content in container)
-        {
-            if(content == false) 
-                return false;
-        }
-        return true;
-    }
-
-    private void fillContainer(bool[] container)
-    {
-        for (int i = 0; i < container.Length; i++)
-        {
-            if (container[i] == false)
-            {
-                container[i] = true;
-                return;
-            } 
-        }
-    }
-
-    private int getCurrentContainerCapacity(bool[] container)
-    {
-        int capacity = 0;
-        foreach (var content in container)
-        {
-            if(content == true)
-                capacity++;
-        }
-        return capacity;
-    }
+    } 
 
     IEnumerator DeployFlare()
     {
