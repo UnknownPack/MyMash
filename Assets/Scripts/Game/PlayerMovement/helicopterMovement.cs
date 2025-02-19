@@ -1,13 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class helicopterMovement : MonoBehaviour
 {
-    [SerializeField] private float thurst = 1f;
-    private float tiltAngle = 60f, roterVolume;
+    [Header("Movement")] 
+    [SerializeField] private float tiltAngle = 60f;
+    [SerializeField] private float shiftDuration = 15f;
+    [SerializeField] private float roterVolume = 0.0f;
+    [SerializeField] float thurst = 1f;
+    
     private Rigidbody2D rigidbody2D;
     private PlayerInput PlayerInput;
     private InputAction moveAction;
@@ -23,29 +28,28 @@ public class helicopterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     { 
-        currentVector = moveAction.ReadValue<Vector2>();
-        roterVolume = currentVector.x;
-        Debug.Log(currentVector);
-        ManageHelicopterTilt();
-        ManageVerticalBehavior();
-    }
+        currentVector = moveAction.ReadValue<Vector2>(); 
+        roterVolume = currentVector.magnitude; 
+        rigidbody2D.AddForce(transform.up * (thurst * currentVector.y));  
+        TiltAngle(); 
+    } 
 
-    private void ManageHelicopterTilt()
+    private void TiltAngle()
     {
-        float xValue = currentVector.x, yValue = currentVector.y, zRotation = transform.rotation.z;
-        float tiltPercentage = xValue * zRotation;
-        Quaternion target = Quaternion.Euler(transform.rotation.x, transform.rotation.y, tiltPercentage);
-        transform.rotation = Quaternion.Slerp(transform.rotation, target,  Time.deltaTime * 2f);
-        
-        
-    }
+        float targetAngleZ = 0f;
+        if (currentVector.x > 0)
+        {
+            targetAngleZ = -shiftDuration; // Tilt right
+        }
+        else if (currentVector.x < 0)
+        {
+            targetAngleZ = shiftDuration; // Tilt left
+        } 
 
-    private void ManageVerticalBehavior()
-    { 
-        rigidbody2D.AddForce(new Vector2(0, currentVector.y) * thurst, ForceMode2D.Force);
-    }
-    
-    private void 
-
-    
+        var clamp = Mathf.Clamp(targetAngleZ, -tiltAngle, tiltAngle);
+        // Smoothly interpolate to the target angle
+        Quaternion targetRotation = Quaternion.Euler(0, 0, clamp * 10f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * shiftDuration); 
+    } 
+ 
 }

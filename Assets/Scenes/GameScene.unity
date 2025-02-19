@@ -574,7 +574,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd567e2e1e1706240a0d2a824c980e6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thurst: 2.5
+  tiltAngle: 35
+  shiftDuration: 7.5
+  roterVolume: 0
+  thurst: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
