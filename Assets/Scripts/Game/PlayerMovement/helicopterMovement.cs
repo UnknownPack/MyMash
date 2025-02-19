@@ -53,9 +53,7 @@ public class helicopterMovement : MonoBehaviour
         currentVector = moveAction.ReadValue<Vector2>(); 
         roterVolume = currentVector.magnitude; 
         rigidbody2D.AddForce(transform.up * (thurst * currentVector.y));  
-        TiltAngle();     
-        //Debug.Log(rigidbody2D.velocity); 
-        Debug.Log("Current Rotation: " + transform.eulerAngles.z);
+        TiltAngle();      
     } 
     
     void FixedUpdate()
@@ -110,7 +108,15 @@ public class helicopterMovement : MonoBehaviour
                 Destroy(other.gameObject); 
             }
         } 
-    } 
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Tree"))
+        {
+            Destroy(gameObject);
+        }
+    }
 
     IEnumerator DeployFlare()
     {

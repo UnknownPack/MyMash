@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Soldier
   - Base
+  - Tree
   layers:
   - Default
   - TransparentFX

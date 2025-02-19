@@ -7,7 +7,10 @@ public class GameStateManager : MonoBehaviour
     public static GameStateManager Instance { get; private set; }
     public int minNumOfSoldiers = 3;
     public int maxNumOfSoldiers = 7;
+    public int minNumOfTrees = 3;
+    public int maxNumOfTrees = 7;
     public int soldierToWin  { get; private set; }
+    public int treeCount  { get; private set; }
     private int playerScore = 0; 
     private bool playerWon = false;
 
@@ -17,11 +20,13 @@ public class GameStateManager : MonoBehaviour
         else Destroy(gameObject);
         
         soldierToWin = Random.Range(minNumOfSoldiers, maxNumOfSoldiers);
+        treeCount = Random.Range(minNumOfTrees, maxNumOfTrees);
     }
 
     private void Update()
     {
-        //if (playerScore >= soldierToWin)  
+        if (playerScore >= soldierToWin)  
+            Debug.LogError("win");
         
         
          
