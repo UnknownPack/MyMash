@@ -12,7 +12,7 @@ public class helicopterMovement : MonoBehaviour
     [SerializeField] private float shiftDuration = 15f;
     [SerializeField] private float roterVolume = 0.0f;
     [SerializeField] float thurst = 1f;
-    [SerializeField] float maxSpeed = 4f;
+    [SerializeField] float maxSpeed = 7f;
 
     [Header("Inventory")] 
     [SerializeField] private int maxPassengerCapactiy;
@@ -54,7 +54,8 @@ public class helicopterMovement : MonoBehaviour
         roterVolume = currentVector.magnitude; 
         rigidbody2D.AddForce(transform.up * (thurst * currentVector.y));  
         TiltAngle();     
-        //Debug.Log(rigidbody2D.velocity);
+        //Debug.Log(rigidbody2D.velocity); 
+        Debug.Log("Current Rotation: " + transform.eulerAngles.z);
     } 
     
     void FixedUpdate()
@@ -64,24 +65,28 @@ public class helicopterMovement : MonoBehaviour
             rigidbody2D.velocity = rigidbody2D.velocity.normalized * maxSpeed;
         }
     }
-
+ 
     private void TiltAngle()
     {
+        // Determine the target tilt angle based on input direction
         float targetAngleZ = 0f;
+    
         if (currentVector.x > 0)
         {
-            targetAngleZ = -shiftDuration; // Tilt right
+            targetAngleZ = -tiltAngle; // Tilt right (negative Z)
         }
         else if (currentVector.x < 0)
         {
-            targetAngleZ = shiftDuration; // Tilt left
-        } 
+            targetAngleZ = tiltAngle; // Tilt left (positive Z)
+        }
 
-        var clamp = Mathf.Clamp(targetAngleZ, -tiltAngle, tiltAngle);
-        // Smoothly interpolate to the target angle
-        Quaternion targetRotation = Quaternion.Euler(0, 0, clamp * 10f);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * shiftDuration); 
+        // Convert to rotation
+        Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngleZ);
+
+        // Smoothly rotate towards target tilt
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * shiftDuration);
     }
+
     
     private void OnFlareAction(InputAction.CallbackContext context) { StartCoroutine(DeployFlare()); } 
     private void OnDepositAction(InputAction.CallbackContext context)
