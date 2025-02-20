@@ -20,9 +20,11 @@ public class helicopterMovement : MonoBehaviour
     [SerializeField] private int currentPassengerCapactiy = 0;
     [SerializeField] private int maxFlaresCapactiy;
     [SerializeField] private int currentFlaresCapactiy = 0; 
+    [SerializeField] private int flaresRecharging = 0; 
     
     [Header("Abilites")]
     [SerializeField] private float flareDuration = 6f;
+    [SerializeField] private float flareRechargeDuration = 15f;
 
     private bool canDeployFlare;
     public bool scrambled;
@@ -42,7 +44,7 @@ public class helicopterMovement : MonoBehaviour
         rigidbody2D = GetComponent<Rigidbody2D>();
         gameStateManager = FindObjectOfType<GameStateManager>();
         flare = GetComponent<ParticleSystem>();
-        
+        currentFlaresCapactiy = maxFlaresCapactiy;
         moveAction = PlayerInput.actions.FindAction("Move");
         flareAction = PlayerInput.actions.FindAction("Flare");
         depositAction = PlayerInput.actions.FindAction("Deposit");
@@ -59,6 +61,10 @@ public class helicopterMovement : MonoBehaviour
         roterVolume = currentVector.magnitude; 
         rigidbody2D.AddForce(transform.up * (thurst * currentVector.y));  
         TiltAngle();      
+        
+        if((currentFlaresCapactiy+flaresRecharging) < maxFlaresCapactiy)
+                    StartCoroutine(recharge(maxFlaresCapactiy - (currentFlaresCapactiy+flaresRecharging)));
+       
     } 
     
     void FixedUpdate()
@@ -89,9 +95,26 @@ public class helicopterMovement : MonoBehaviour
         // Smoothly rotate towards target tilt
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * shiftDuration);
     }
+    
+    IEnumerator recharge(int timesToRecharge){ 
+        flaresRecharging = timesToRecharge;
+        for(int i = 0; i < timesToRecharge; i++)
+        {
+            yield return new WaitForSeconds(flareRechargeDuration);
+            currentFlaresCapactiy++;
+        }
+        flaresRecharging = 0;
+    }
 
     
-    private void OnFlareAction(InputAction.CallbackContext context) { StartCoroutine(DeployFlare()); } 
+    private void OnFlareAction(InputAction.CallbackContext context) 
+    {
+        if(currentFlaresCapactiy > 0)
+        {
+            currentFlaresCapactiy--; 
+            StartCoroutine(DeployFlare());
+        }
+    } 
     private void OnDepositAction(InputAction.CallbackContext context)
     {
         if(onBase)
