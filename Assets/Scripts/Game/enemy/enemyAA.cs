@@ -34,7 +34,7 @@ public class enemyAA : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (tracking)
+        if (tracking && !tracking.GetComponent<helicopterMovement>().scrambled )
         {
             trackingTime += Time.deltaTime; 
             lineRenderer.SetPosition(0, transform.GetChild(0).transform.position);
@@ -43,6 +43,10 @@ public class enemyAA : MonoBehaviour
             progress = Mathf.Clamp(progress, 0f, timeToDetect);
             ManageLineWidth(detectionLineWidth * progress);
             ManageLineColor(Color.Lerp(Color.yellow, Color.red, progress));
+        }
+        else
+        {
+            ManageLineWidth(0);
         }
 
         if (trackingTime >= timeToDetect && !fired)
@@ -70,8 +74,7 @@ public class enemyAA : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player") && track)
-        {
-            Debug.Log(other.name);
+        {  
             tracking = other.gameObject;
         }
     }

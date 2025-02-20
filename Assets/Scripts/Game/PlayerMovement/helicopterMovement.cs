@@ -25,9 +25,10 @@ public class helicopterMovement : MonoBehaviour
     [SerializeField] private float flareDuration = 6f;
 
     private bool canDeployFlare;
-    private bool scrambled;
+    public bool scrambled;
     private bool onBase = false;
     private GameObject onSoldier;
+    private ParticleSystem flare;
 
     private Rigidbody2D rigidbody2D;
     private GameStateManager gameStateManager;
@@ -40,6 +41,7 @@ public class helicopterMovement : MonoBehaviour
         PlayerInput = GetComponent<PlayerInput>();
         rigidbody2D = GetComponent<Rigidbody2D>();
         gameStateManager = FindObjectOfType<GameStateManager>();
+        flare = GetComponent<ParticleSystem>();
         
         moveAction = PlayerInput.actions.FindAction("Move");
         flareAction = PlayerInput.actions.FindAction("Flare");
@@ -125,9 +127,10 @@ public class helicopterMovement : MonoBehaviour
     IEnumerator DeployFlare()
     {
         scrambled = true;
-        Debug.LogWarning("deployFlare");
-        //emmit particles here
+        Debug.Log("Deploying Flare");
+        flare.Play();
         yield return new WaitForSeconds(flareDuration);
+        Debug.Log("Flares exhausted");
         scrambled = false;
     }
     

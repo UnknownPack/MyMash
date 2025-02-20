@@ -43,7 +43,8 @@ public class AutonomusMissle : MonoBehaviour
             trackCoroutine = null;
             Destroy(gameObject);
         }
-        if(track)
+        
+        if(track && !target.GetComponent<helicopterMovement>().scrambled)
             trackTarget(target.transform.position);
     }
 
