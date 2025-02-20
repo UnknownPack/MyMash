@@ -17,16 +17,13 @@ public class helicopterMovement : MonoBehaviour
 
     [Header("Inventory")] 
     [SerializeField] private int maxPassengerCapactiy;
-    [SerializeField] private int currentPassengerCapactiy = 0;
-    [SerializeField] private int maxFlaresCapactiy;
-    [SerializeField] private int currentFlaresCapactiy = 0; 
-    [SerializeField] private int flaresRecharging = 0; 
+    [SerializeField] private int currentPassengerCapactiy = 0; 
     
     [Header("Abilites")]
     [SerializeField] private float flareDuration = 6f;
     [SerializeField] private float flareRechargeDuration = 15f;
 
-    private bool canDeployFlare;
+    private bool canDeployFlare = true;
     public bool scrambled;
     private bool onBase = false;
     private GameObject onSoldier;
@@ -43,8 +40,7 @@ public class helicopterMovement : MonoBehaviour
         PlayerInput = GetComponent<PlayerInput>();
         rigidbody2D = GetComponent<Rigidbody2D>();
         gameStateManager = FindObjectOfType<GameStateManager>();
-        flare = GetComponent<ParticleSystem>();
-        currentFlaresCapactiy = maxFlaresCapactiy;
+        flare = GetComponent<ParticleSystem>(); 
         moveAction = PlayerInput.actions.FindAction("Move");
         flareAction = PlayerInput.actions.FindAction("Flare");
         depositAction = PlayerInput.actions.FindAction("Deposit");
@@ -60,10 +56,7 @@ public class helicopterMovement : MonoBehaviour
         currentVector = moveAction.ReadValue<Vector2>(); 
         roterVolume = currentVector.magnitude; 
         rigidbody2D.AddForce(transform.up * (thurst * currentVector.y));  
-        TiltAngle();      
-        
-        if((currentFlaresCapactiy+flaresRecharging) < maxFlaresCapactiy)
-                    StartCoroutine(recharge(maxFlaresCapactiy - (currentFlaresCapactiy+flaresRecharging)));
+        TiltAngle();     
        
     } 
     
@@ -96,23 +89,25 @@ public class helicopterMovement : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * shiftDuration);
     }
     
-    IEnumerator recharge(int timesToRecharge){ 
-        flaresRecharging = timesToRecharge;
-        for(int i = 0; i < timesToRecharge; i++)
+    IEnumerator recharge()
+    {
+        canDeployFlare = false; 
+        float flareDuration = flareRechargeDuration, elapsedTime = 0f;
+        while (elapsedTime < flareDuration)
         {
-            yield return new WaitForSeconds(flareRechargeDuration);
-            currentFlaresCapactiy++;
-        }
-        flaresRecharging = 0;
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        } 
+        canDeployFlare = true;
     }
 
     
     private void OnFlareAction(InputAction.CallbackContext context) 
     {
-        if(currentFlaresCapactiy > 0)
-        {
-            currentFlaresCapactiy--; 
+        if(canDeployFlare)
+        { 
             StartCoroutine(DeployFlare());
+            StartCoroutine(recharge());
         }
     } 
     private void OnDepositAction(InputAction.CallbackContext context)
@@ -148,12 +143,10 @@ public class helicopterMovement : MonoBehaviour
     }
 
     IEnumerator DeployFlare()
-    {
-        scrambled = true;
-        Debug.Log("Deploying Flare");
+    { 
+        scrambled = true; 
         flare.Play();
-        yield return new WaitForSeconds(flareDuration);
-        Debug.Log("Flares exhausted");
+        yield return new WaitForSeconds(flareDuration); 
         scrambled = false;
     }
     
