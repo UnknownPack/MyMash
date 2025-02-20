@@ -23,6 +23,7 @@ public class Explode : MonoBehaviour
         } 
         transform.localScale = finalExplosionScale;
         yield return new WaitForSeconds(0.5f);
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
         Destroy(gameObject);
     }
 }
