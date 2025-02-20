@@ -31,20 +31,10 @@ public class ProceduralGeneratedMap : MonoBehaviour
         maxSoldierCount = gameStateManager.soldierToWin;
         maxTreesCount = gameStateManager.treeCount;
         positionList = GenerateList().OrderBy(_ => Random.value).ToList();
-        
-        Debug.Log("before");
-        foreach (var pos in positionList)
-        {
-            Debug.Log(pos);
-        }
+         
         GenerateBase();
         GenerateSoldier();
-        GenerateTrees();
-        Debug.Log("after");
-        foreach (var pos in positionList)
-        {
-            Debug.Log(pos);
-        }
+        GenerateTrees(); 
     }
 
     // Update is called once per frame
