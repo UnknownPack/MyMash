@@ -17,8 +17,7 @@ public class GameStateManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null) Instance = this;
-        else Destroy(gameObject);
-        
+        else Destroy(gameObject); 
         soldierToWin = Random.Range(minNumOfSoldiers, maxNumOfSoldiers);
         treeCount = Random.Range(minNumOfTrees, maxNumOfTrees);
     }

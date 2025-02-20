@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -10,6 +11,8 @@ public class ProceduralGeneratedMap : MonoBehaviour
     [SerializeField] private int mapHeight = 18;
     [SerializeField] private int maxBaseNumber = 2;
     [SerializeField] private int xPosForSeperation = -12;
+    [SerializeField] private float distanceBetween = 0.5f;
+    [SerializeField] private float distanceTolerance = 3.75f;
     
     private int currentNumOfBaseNumber = 0, currentNumOfSoldiers = 0, currentNumOfTrees = 0;
     
@@ -17,6 +20,7 @@ public class ProceduralGeneratedMap : MonoBehaviour
     [SerializeField] GameObject BasePrefab;
     [SerializeField] GameObject treePrefab;
     private int maxSoldierCount = 0, maxTreesCount = 0;
+    List<Vector2> positionList = new List<Vector2>();
     
     private GameStateManager gameStateManager;
  
@@ -26,9 +30,21 @@ public class ProceduralGeneratedMap : MonoBehaviour
         gameStateManager = FindObjectOfType<GameStateManager>();
         maxSoldierCount = gameStateManager.soldierToWin;
         maxTreesCount = gameStateManager.treeCount;
+        positionList = GenerateList().OrderBy(_ => Random.value).ToList();
+        
+        Debug.Log("before");
+        foreach (var pos in positionList)
+        {
+            Debug.Log(pos);
+        }
         GenerateBase();
         GenerateSoldier();
         GenerateTrees();
+        Debug.Log("after");
+        foreach (var pos in positionList)
+        {
+            Debug.Log(pos);
+        }
     }
 
     // Update is called once per frame
@@ -37,23 +53,47 @@ public class ProceduralGeneratedMap : MonoBehaviour
         
     }
 
-    void GenerateBase()
+    List<Vector2> GenerateList()
     {
-        for (int y = 0; y < maxBaseNumber; y++)
+        List<Vector2> list = new List<Vector2>();
+        for (float x = xPosForSeperation+4; x <= mapLength; x+=distanceBetween)
         {
-            float randomX = Random.Range(-34f, -12f);
-            float randomY = Random.Range(-18f, 18f);
-            Instantiate(BasePrefab, new Vector3(randomX, randomY, 0), Quaternion.identity);
-        }  
+            for (float i = xPosForSeperation+4; i <= mapHeight; i+=distanceBetween)
+            {
+                list.Add(new Vector2(x, i));
+            }
+        }
+        return list;
+    }
+    
+    // gives a vector2 from list and removes nearby positons from list
+    Vector2 giveVector2Position()
+    { 
+        int index = Random.Range(0, positionList.Count);
+        Vector2 selectedPosition = positionList[index]; 
+        positionList.RemoveAll(pos => Vector2.Distance(pos, selectedPosition) <= distanceTolerance);
+        return selectedPosition;
+    }
+
+
+    void GenerateBase()
+    { 
+        int randomX = Random.Range(-28, -12);
+        int randomY = Random.Range(-18, 18);
+        Instantiate(BasePrefab, new Vector2(randomX, randomY), Quaternion.identity); 
     }
 
     void GenerateSoldier()
     {
         for (int y = 0; y < maxSoldierCount; y++)
         {
-            float randomX = Random.Range(-10f, 34f);
-            float randomY = Random.Range(-10f, 10f);
-            Instantiate(soldierPrefab, new Vector3(randomX, randomY, 0), Quaternion.identity);
+            if(positionList.Count <= 0)
+            {
+                Debug.LogError("no more valid positions");
+                break;
+            }
+            Vector2 position = giveVector2Position();
+            Instantiate(soldierPrefab, position, Quaternion.identity);
         }
     }
 
@@ -61,9 +101,13 @@ public class ProceduralGeneratedMap : MonoBehaviour
     {
         for (int y = 0; y < maxTreesCount; y++)
         {
-            float randomX = Random.Range(-10f, 34f);
-            float randomY = Random.Range(-10f, 10f);
-            Instantiate(treePrefab, new Vector3(randomX, randomY, 0), Quaternion.identity);
+            if(positionList.Count <= 0)
+            {
+                Debug.LogError("no more valid positions");
+                break;
+            }
+            Vector2 position = giveVector2Position();
+            Instantiate(treePrefab, position, Quaternion.identity);
         }
     }
 }

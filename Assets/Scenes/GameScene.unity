@@ -122,6 +122,37 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &72028568
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 72028569}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &72028569
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72028568}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 33.4, y: -8.5, z: -0.39377427}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &281943385
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,8 +185,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minNumOfSoldiers: 3
   maxNumOfSoldiers: 7
-  minNumOfTrees: 3
-  maxNumOfTrees: 7
+  minNumOfTrees: 5
+  maxNumOfTrees: 10
 --- !u!4 &281943387
 Transform:
   m_ObjectHideFlags: 0
@@ -187,6 +218,8 @@ MonoBehaviour:
   mapHeight: 5
   maxBaseNumber: 2
   xPosForSeperation: -12
+  distanceBetween: 2.5
+  distanceTolerance: 5.5
   soldierPrefab: {fileID: 5979403653046525564, guid: eb55e46b19922924cab207b6b6de3a2d, type: 3}
   BasePrefab: {fileID: 2740681032873920758, guid: 70fcf236c2869e4458b68732b08307dd, type: 3}
   treePrefab: {fileID: 1709610515538282244, guid: 6cc5e8d5c096be242beb326d2e71b6e0, type: 3}
@@ -226,7 +259,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 1}
+  m_BackGroundColor: {r: 0.6020528, g: 0.8742138, b: 0.62849313, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -331,7 +364,7 @@ PrefabInstance:
       objectReference: {fileID: 326235141}
     - target: {fileID: 3174088555184198301, guid: e652f9ae03cfbbf4ba2b3cf64f014dcf, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.11
+      value: -26.6
       objectReference: {fileID: 0}
     - target: {fileID: 3174088555184198301, guid: e652f9ae03cfbbf4ba2b3cf64f014dcf, type: 3}
       propertyPath: m_LocalPosition.y
@@ -418,3 +451,4 @@ SceneRoots:
   - {fileID: 3482477108393583872}
   - {fileID: 1009646984}
   - {fileID: 281943387}
+  - {fileID: 72028569}

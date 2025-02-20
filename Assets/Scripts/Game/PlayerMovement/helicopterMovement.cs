@@ -125,6 +125,7 @@ public class helicopterMovement : MonoBehaviour
     IEnumerator DeployFlare()
     {
         scrambled = true;
+        Debug.LogWarning("deployFlare");
         //emmit particles here
         yield return new WaitForSeconds(flareDuration);
         scrambled = false;
@@ -132,8 +133,16 @@ public class helicopterMovement : MonoBehaviour
     
     void OnDestroy()
     {
-        flareAction.performed -= OnFlareAction;
-        depositAction.performed -= OnDepositAction;
+        if(flareAction==null)
+            Debug.LogError("flareAction is null");
+        else
+            flareAction.performed -= OnFlareAction;
+        
+        if(depositAction==null)
+            Debug.LogError("depositAction is null");
+        else
+            depositAction.performed -= OnDepositAction;
+        
         gameStateManager.PlayerFailed();
     }
  
