@@ -9,6 +9,13 @@ public class enemyAA : MonoBehaviour
     [SerializeField] private float timeToDetect = 3f;
     [SerializeField] private float reloadTime = 5f;
     [SerializeField] private float detectionLineWidth = 0.25f;
+
+    [Header("missile stats")] [SerializeField]
+    private float initialLaunch;
+    [SerializeField] private float timeToManeuver;
+    [SerializeField] private float timeToLive;
+    [SerializeField] private float thrust;
+    [SerializeField] private float turnRate;
     
     [Header("prefabs")]
     [SerializeField] private GameObject missle;
@@ -37,9 +44,10 @@ public class enemyAA : MonoBehaviour
             ManageLineColor(Color.Lerp(Color.yellow, Color.red, progress));
         }
 
-        if (trackingTime >= timeToDetect)
-        {
-            Instantiate(missle, transform.GetChild(1).transform.position, transform.GetChild(1).transform.rotation);
+        if (trackingTime >= timeToDetect && !fired)
+        {  
+            GameObject missile = Instantiate(missle, transform.GetChild(1).transform.position, transform.GetChild(1).transform.rotation);
+            missile.GetComponent<AutonomusMissle>().Initialize(tracking, initialLaunch, timeToManeuver, timeToLive, thrust, turnRate);
             StartCoroutine(Reload());
         }
         
@@ -48,6 +56,7 @@ public class enemyAA : MonoBehaviour
 
     IEnumerator Reload()
     {
+        trackingTime = 0f;
         fired = true;
         track = false;
         yield return new WaitForSeconds(reloadTime);
