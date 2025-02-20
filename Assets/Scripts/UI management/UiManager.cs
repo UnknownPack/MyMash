@@ -12,6 +12,7 @@ public class UiManager : MonoBehaviour
     private Button restartButton, menuButton;
     
     private helicopterMovement helicopterMovement;
+    private GameStateManager gameStateManager;
      
     
     // Start is called before the first frame update
@@ -31,17 +32,45 @@ public class UiManager : MonoBehaviour
             
         gameOverUI = root.Q<VisualElement>("GameOverUI");
         resultText = root.Q<Label>("ResultText");
-        root.Q<Button>("restart").clicked += () => { UnityEngine.SceneManagement.SceneManager.LoadScene(1); };
-        root.Q<Button>("menu").clicked += () => { UnityEngine.SceneManagement.SceneManager.LoadScene(0); };
+        root.Q<Button>("restart").clicked += () => {  Time.timeScale = 1f; UnityEngine.SceneManagement.SceneManager.LoadScene(1); };
+        root.Q<Button>("menu").clicked += () => {  Time.timeScale = 1f; UnityEngine.SceneManagement.SceneManager.LoadScene(0); };
         gameOverUI.style.display = DisplayStyle.None;
         
         helicopterMovement = FindObjectOfType<helicopterMovement>();
-        
+        gameStateManager = FindObjectOfType<GameStateManager>(); 
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (helicopterMovement != null )
+        {
+            soldiersInside.text = $"{helicopterMovement.GetCurrentCapacity()} soldiers inside Helicopter";
+            resultProgressBar.style.display = helicopterMovement.canDeployFlare ? DisplayStyle.None : DisplayStyle.Flex;
+            resultProgressBar.value = helicopterMovement.canDeployFlare ?  helicopterMovement.flareRechargeDuration :  helicopterMovement.currentRechargeTime;
+            resultProgressBar.highValue = helicopterMovement.flareRechargeDuration; 
+            flareStatus.text = helicopterMovement.canDeployFlare ? "Flares Ready" : "Recharging Flares...";
+            flareStatus.style.color = helicopterMovement.canDeployFlare ? Color.green : Color.yellow;
+        } 
         
+        if (gameStateManager != null )
+        { 
+            soldiersRescued.text = $"{gameStateManager.playerScore} soldiers rescued";
+            soldiersOutside.text = $"{gameStateManager.soldierToWin - gameStateManager.playerScore} soldiers remaining";
+        } 
     }
+
+    public void DisplayEndGame()
+    {
+        gameUI.style.display = DisplayStyle.None;
+        gameOverUI.style.display = DisplayStyle.Flex;
+    }
+
+    public void SetEndGameMessage(string message)
+    {
+        resultText.text = message;
+    }
+
+    public VisualElement GetBase() { return gameOverUI; }
+
 }

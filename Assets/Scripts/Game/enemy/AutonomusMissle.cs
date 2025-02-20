@@ -11,6 +11,7 @@ public class AutonomusMissle : MonoBehaviour
     private bool track = false;
     private Coroutine trackCoroutine;
     private Rigidbody2D rb;
+    private helicopterMovement movement;
 
     public void Initialize(GameObject newTarget, float launchTime, float maneuverTime, float liveTime, float thrustMagnitude, float turnRate, float maxSpeed)
     {
@@ -27,6 +28,7 @@ public class AutonomusMissle : MonoBehaviour
     { 
         rb = GetComponent<Rigidbody2D>();
         trackCoroutine = StartCoroutine(move());
+        movement = GetComponent<helicopterMovement>();
     }
 
     // Update is called once per frame
@@ -44,7 +46,7 @@ public class AutonomusMissle : MonoBehaviour
             Destroy(gameObject);
         }
         
-        if(track && !target.GetComponent<helicopterMovement>().scrambled)
+        if(track && movement!=null && !movement.scrambled)
             trackTarget(target.transform.position);
     }
 

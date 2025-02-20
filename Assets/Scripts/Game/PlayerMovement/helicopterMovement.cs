@@ -21,9 +21,10 @@ public class helicopterMovement : MonoBehaviour
     
     [Header("Abilites")]
     [SerializeField] private float flareDuration = 6f;
-    [SerializeField] private float flareRechargeDuration = 15f;
+    public float flareRechargeDuration = 15f;
+    public float currentRechargeTime = 0;
 
-    private bool canDeployFlare = true;
+    public bool canDeployFlare = true;
     public bool scrambled;
     private bool onBase = false;
     private GameObject onSoldier;
@@ -91,11 +92,12 @@ public class helicopterMovement : MonoBehaviour
     
     IEnumerator recharge()
     {
-        canDeployFlare = false; 
-        float flareDuration = flareRechargeDuration, elapsedTime = 0f;
-        while (elapsedTime < flareDuration)
+        canDeployFlare = false;
+        currentRechargeTime = 0;
+        float flareDuration = flareRechargeDuration;
+        while (currentRechargeTime < flareDuration)
         {
-            elapsedTime += Time.deltaTime;
+            currentRechargeTime += Time.deltaTime;
             yield return null;
         } 
         canDeployFlare = true;
@@ -119,11 +121,19 @@ public class helicopterMovement : MonoBehaviour
             // Play sound effect here
         }
     }
-    private void OnRestartAction(InputAction.CallbackContext context){ SceneManager.LoadScene(1); }
+    private void OnRestartAction(InputAction.CallbackContext context){ Time.timeScale = 1f; SceneManager.LoadScene(1); }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        onBase = other.CompareTag("Base");
+        if (other.CompareTag("Base"))
+        {
+            onBase = true;
+            if(currentPassengerCapactiy > 0)
+                other.transform.GetChild(0).gameObject.SetActive(true);
+            else 
+                other.transform.GetChild(0).gameObject.SetActive(false); 
+        } 
+        
         if (other.CompareTag("Soldier"))
         {
             if(currentPassengerCapactiy < maxPassengerCapactiy )
@@ -134,12 +144,23 @@ public class helicopterMovement : MonoBehaviour
         } 
     }
 
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Base"))
+        {
+            onBase = false;
+            other.transform.GetChild(0).gameObject.SetActive(false);
+        } 
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Tree"))
         {
             Destroy(gameObject);
         }
+        
+        
     }
 
     IEnumerator DeployFlare()
@@ -160,9 +181,9 @@ public class helicopterMovement : MonoBehaviour
         if(depositAction==null)
             Debug.LogError("depositAction is null");
         else
-            depositAction.performed -= OnDepositAction;
-        
-        gameStateManager.PlayerFailed();
+            depositAction.performed -= OnDepositAction; 
     }
+    
+    public int GetCurrentCapacity(){return currentPassengerCapactiy;}
  
 }

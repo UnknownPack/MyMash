@@ -290,7 +290,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: -0.5548742, y: 0}
   serializedVersion: 2
-  m_Radius: 15
+  m_Radius: 20
 --- !u!50 &8208156266932858320
 Rigidbody2D:
   serializedVersion: 4
@@ -331,6 +331,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeToDetect: 3
-  timeToFire: 1.5
+  reloadTime: 2
   detectionLineWidth: 0.25
-  missle: {fileID: 0}
+  initialLaunch: 0.25
+  timeToManeuver: 2
+  timeToLive: 7.5
+  thrust: 1
+  turnRate: 25
+  maxSpeed: 2
+  missle: {fileID: 5203270697078847467, guid: dca0db931b44b11409b3f8130de15a32, type: 3}

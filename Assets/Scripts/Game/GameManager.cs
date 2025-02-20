@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 public class GameStateManager : MonoBehaviour
@@ -16,8 +17,11 @@ public class GameStateManager : MonoBehaviour
     public GameObject explosion;
     private GameObject player;
     private Vector3 playerPos;
-    private int playerScore = 0; 
+    public int playerScore = 0; 
     private bool playerWon = false;
+    private UiManager mainGameUi; 
+    private Coroutine coroutine = null;
+    private bool playerDead = false;
 
     private void Awake()
     {
@@ -31,26 +35,49 @@ public class GameStateManager : MonoBehaviour
     {
         player = FindObjectOfType<helicopterMovement>().gameObject;
         playerPos = player.transform.position;
+        mainGameUi = FindObjectOfType<UiManager>(); 
     }
 
     private void Update()
     {
-        if (playerScore >= soldierToWin)  
-            Debug.LogError("win");
+        if (playerScore >= soldierToWin) {
+            if (coroutine == null)
+            {
+                coroutine = StartCoroutine(endGameCoroutine("You Win"));
+            }
+        }
 
         if (player != null)
             playerPos = player.transform.position;
-         
+        
+        if (player == null)
+        {
+            if (coroutine == null)
+            {
+                playerDead = true;
+                coroutine = StartCoroutine(endGameCoroutine("Game Over"));
+            }
+        }
     }
     
     public void AddScore(int score){playerScore += score;} 
-    public void PlayerFailed() { StartCoroutine(endGameCoroutine());}
 
-    IEnumerator endGameCoroutine()
+    IEnumerator endGameCoroutine(string message)
     {
-        Instantiate(explosion, playerPos, Quaternion.identity);
-        yield return new WaitForSeconds(2f);
-        SceneManager.LoadScene(1);
+        if(playerDead)
+            Instantiate(explosion, playerPos, Quaternion.identity);
+        Time.timeScale = 0;
+        mainGameUi.GetBase().style.backgroundColor = Color.white;
+        float duration = 0.5f, elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.unscaledTime;
+            mainGameUi.GetBase().style.backgroundColor = Color.Lerp(Color.white, Color.black, elapsedTime / duration);
+            yield return null;
+        }
+        mainGameUi.GetBase().style.backgroundColor = Color.black;
+        mainGameUi.DisplayEndGame();
+        mainGameUi.SetEndGameMessage(message);
     }
      
 }
