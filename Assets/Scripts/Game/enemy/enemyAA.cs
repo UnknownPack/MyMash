@@ -16,6 +16,7 @@ public class enemyAA : MonoBehaviour
     [SerializeField] private float timeToLive;
     [SerializeField] private float thrust;
     [SerializeField] private float turnRate;
+    [SerializeField] private float maxSpeed;
     
     [Header("prefabs")]
     [SerializeField] private GameObject missle;
@@ -47,7 +48,8 @@ public class enemyAA : MonoBehaviour
         if (trackingTime >= timeToDetect && !fired)
         {  
             GameObject missile = Instantiate(missle, transform.GetChild(1).transform.position, transform.GetChild(1).transform.rotation);
-            missile.GetComponent<AutonomusMissle>().Initialize(tracking, initialLaunch, timeToManeuver, timeToLive, thrust, turnRate);
+            missile.GetComponent<Rigidbody2D>().AddForce(transform.up * 5f, ForceMode2D.Impulse);
+            missile.GetComponent<AutonomusMissle>().Initialize(tracking, initialLaunch, timeToManeuver, timeToLive, thrust, turnRate, maxSpeed);
             StartCoroutine(Reload());
         }
         

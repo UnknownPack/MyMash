@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -6,12 +7,12 @@ using UnityEngine;
 public class AutonomusMissle : MonoBehaviour
 {
     private GameObject target {get; set;}
-    private float initialLaunch, timeToManeuver, timeToLive, thrust, turnRate, currentVelocity = 0, lifeClock = 0;
+    private float initialLaunch, timeToManeuver, timeToLive, thrust, turnRate, maxSpeed, currentVelocity = 0, lifeClock = 0;
     private bool track = false;
     private Coroutine trackCoroutine;
     private Rigidbody2D rb;
 
-    public void Initialize(GameObject newTarget, float launchTime, float maneuverTime, float liveTime, float thrustMagnitude, float turnRate)
+    public void Initialize(GameObject newTarget, float launchTime, float maneuverTime, float liveTime, float thrustMagnitude, float turnRate, float maxSpeed)
     {
         target = newTarget;
         initialLaunch = launchTime;
@@ -19,6 +20,7 @@ public class AutonomusMissle : MonoBehaviour
         timeToLive = liveTime;
         thrust = thrustMagnitude;
         this.turnRate = turnRate;
+        this.maxSpeed = maxSpeed;
     }
     // Start is called before the first frame update
     void Start()
@@ -31,6 +33,7 @@ public class AutonomusMissle : MonoBehaviour
     void Update()
     {
         currentVelocity += Time.deltaTime * thrust;
+        currentVelocity = Mathf.Clamp(currentVelocity, 0, maxSpeed);
         lifeClock += Time.deltaTime;
         rb.AddForce(transform.up * currentVelocity); 
         
@@ -41,7 +44,7 @@ public class AutonomusMissle : MonoBehaviour
             Destroy(gameObject);
         }
         if(track)
-            trackTarget();
+            trackTarget(target.transform.position);
     }
 
     IEnumerator move()
@@ -52,13 +55,22 @@ public class AutonomusMissle : MonoBehaviour
         track = false;
     }
 
-    void trackTarget()
+    void trackTarget(Vector3 targetPos)
     {
         if (target == null) return;
-        Vector3 direction = target.transform.position - transform.position;
+        Vector3 direction = targetPos - transform.position ;
         // Calculate angle in degrees, using atan2
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0.0f, 0.0f, angle); 
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg- 90f;
+        Quaternion targetRotation = Quaternion.Euler(0.0f, 0.0f, angle);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * turnRate);
+    }
+
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Player"))
+        {
+            Destroy(other.gameObject);
+            Destroy(gameObject); 
+        }
     }
 }
