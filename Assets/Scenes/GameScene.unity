@@ -186,12 +186,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2874825e066ae8841804973167c4455f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapLength: 9
-  mapHeight: 5
-  maxBaseNumber: 2
+  mapLength: 34
+  mapHeight: 9
+  maxBaseNumber: 1
   xPosForSeperation: -12
-  distanceBetween: 2.5
-  distanceTolerance: 5.5
+  distanceBetween: 5
+  distanceTolerance: 6
   soldierPrefab: {fileID: 5979403653046525564, guid: eb55e46b19922924cab207b6b6de3a2d, type: 3}
   BasePrefab: {fileID: 2740681032873920758, guid: 70fcf236c2869e4458b68732b08307dd, type: 3}
   treePrefab: {fileID: 1709610515538282244, guid: 6cc5e8d5c096be242beb326d2e71b6e0, type: 3}

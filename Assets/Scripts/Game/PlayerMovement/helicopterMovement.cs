@@ -186,5 +186,6 @@ public class helicopterMovement : MonoBehaviour
     }
     
     public int GetCurrentCapacity(){return currentPassengerCapactiy;}
+    public int GetMaxCapacity(){return maxPassengerCapactiy;}
  
 }

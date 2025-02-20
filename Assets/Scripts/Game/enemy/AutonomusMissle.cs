@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class AutonomusMissle : MonoBehaviour
 {
+    public GameObject explosionPrefab;
     private GameObject target {get; set;}
     private float initialLaunch, timeToManeuver, timeToLive, thrust, turnRate, maxSpeed, currentVelocity = 0, lifeClock = 0;
     private bool track = false;
@@ -28,7 +29,7 @@ public class AutonomusMissle : MonoBehaviour
     { 
         rb = GetComponent<Rigidbody2D>();
         trackCoroutine = StartCoroutine(move());
-        movement = GetComponent<helicopterMovement>();
+        movement = FindObjectOfType<helicopterMovement>();
     }
 
     // Update is called once per frame
@@ -47,7 +48,7 @@ public class AutonomusMissle : MonoBehaviour
         }
         
         if(track && movement!=null && !movement.scrambled)
-            trackTarget(target.transform.position);
+            trackTarget(target.transform.position);   
     }
 
     IEnumerator move()
@@ -72,8 +73,13 @@ public class AutonomusMissle : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
-            Destroy(other.gameObject);
-            Destroy(gameObject); 
-        }
+            Destroy(other.gameObject); 
+        } 
+        Destroy(gameObject);  
+    }
+
+    private void OnDestroy()
+    {
+        Instantiate(explosionPrefab, transform.position, Quaternion.identity);
     }
 }

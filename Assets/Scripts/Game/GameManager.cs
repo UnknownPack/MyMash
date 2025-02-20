@@ -62,8 +62,7 @@ public class GameStateManager : MonoBehaviour
     
     public void AddScore(int score){
         GetComponent<AudioSource>().Play(); 
-        playerScore += score;
-        
+        playerScore += score; 
     } 
 
     IEnumerator endGameCoroutine(string message)

@@ -45,7 +45,7 @@ public class UiManager : MonoBehaviour
     {
         if (helicopterMovement != null )
         {
-            soldiersInside.text = $"{helicopterMovement.GetCurrentCapacity()} soldiers inside Helicopter";
+            soldiersInside.text = $"{helicopterMovement.GetCurrentCapacity()}/{helicopterMovement.GetMaxCapacity()} soldiers inside";
             resultProgressBar.style.display = helicopterMovement.canDeployFlare ? DisplayStyle.None : DisplayStyle.Flex;
             resultProgressBar.value = helicopterMovement.canDeployFlare ?  helicopterMovement.flareRechargeDuration :  helicopterMovement.currentRechargeTime;
             resultProgressBar.highValue = helicopterMovement.flareRechargeDuration; 
