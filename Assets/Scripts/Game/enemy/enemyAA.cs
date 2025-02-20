@@ -78,10 +78,12 @@ public class enemyAA : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        tracking = null;
-        trackingTime = 0; 
-        lineRenderer.SetPosition(1, Vector2.zero);
-        ManageLineWidth(0);
+        if (other.CompareTag("Player")){
+            tracking = null;
+            trackingTime = 0;
+            lineRenderer.SetPosition(1, Vector2.zero);
+            ManageLineWidth(0);
+        }
     }
 
     void ManageLineWidth(float width)
