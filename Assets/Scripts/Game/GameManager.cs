@@ -60,7 +60,11 @@ public class GameStateManager : MonoBehaviour
         }
     }
     
-    public void AddScore(int score){playerScore += score;} 
+    public void AddScore(int score){
+        GetComponent<AudioSource>().Play(); 
+        playerScore += score;
+        
+    } 
 
     IEnumerator endGameCoroutine(string message)
     {

@@ -138,6 +138,7 @@ public class helicopterMovement : MonoBehaviour
         {
             if(currentPassengerCapactiy < maxPassengerCapactiy )
             {
+                GetComponent<AudioSource>().Play();
                 currentPassengerCapactiy++;
                 Destroy(other.gameObject); 
             }

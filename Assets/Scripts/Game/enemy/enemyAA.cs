@@ -25,10 +25,15 @@ public class enemyAA : MonoBehaviour
     private bool fired = false, track = true;
     private GameObject tracking;
     private LineRenderer lineRenderer;
+    private AudioSource audioSource;
+    [Header("sounds")]
+    [SerializeField] List<AudioClip> audioClip;
+    
     // Start is called before the first frame update
     void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -36,7 +41,7 @@ public class enemyAA : MonoBehaviour
     {
         if (tracking && !tracking.GetComponent<helicopterMovement>().scrambled )
         {
-            trackingTime += Time.deltaTime; 
+            trackingTime += Time.deltaTime;  
             lineRenderer.SetPosition(0, transform.GetChild(0).transform.position);
             lineRenderer.SetPosition(1, tracking.transform.position);
             float progress = trackingTime / timeToDetect;
@@ -52,6 +57,8 @@ public class enemyAA : MonoBehaviour
         if (trackingTime >= timeToDetect && !fired)
         {  
             GameObject missile = Instantiate(missle, transform.GetChild(1).transform.position, transform.GetChild(1).transform.rotation);
+            audioSource.clip = audioClip[1]; 
+            audioSource.Play();
             missile.GetComponent<Rigidbody2D>().AddForce(transform.up * 5f, ForceMode2D.Impulse);
             missile.GetComponent<AutonomusMissle>().Initialize(tracking, initialLaunch, timeToManeuver, timeToLive, thrust, turnRate, maxSpeed);
             StartCoroutine(Reload());
