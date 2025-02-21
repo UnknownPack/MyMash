@@ -10,8 +10,7 @@ public class helicopterMovement : MonoBehaviour
 {
     [Header("Movement")] 
     [SerializeField] private float tiltAngle = 60f;
-    [SerializeField] private float shiftDuration = 15f;
-    [SerializeField] private float roterVolume = 0.0f;
+    [SerializeField] private float shiftDuration = 15f; 
     [SerializeField] float thurst = 1f;
     [SerializeField] float maxSpeed = 7f;
 
@@ -20,12 +19,13 @@ public class helicopterMovement : MonoBehaviour
     [SerializeField] private int currentPassengerCapactiy = 0; 
     
     [Header("Abilites")]
-    [SerializeField] private float flareDuration = 6f;
+    public float flareDuration = 6f;
     public float flareRechargeDuration = 15f;
     public float currentRechargeTime = 0;
 
     public bool canDeployFlare = true;
     public bool scrambled;
+    public float currentEffectTime = 0;
     private bool onBase = false;
     private GameObject onSoldier;
     private ParticleSystem flare;
@@ -34,7 +34,7 @@ public class helicopterMovement : MonoBehaviour
     private GameStateManager gameStateManager;
     private PlayerInput PlayerInput;
     private InputAction moveAction, flareAction, depositAction, restartAction;
-    private Vector2 currentVector;
+    private Vector2 currentVector; 
     // Start is called before the first frame update
     void Start()
     {
@@ -42,10 +42,15 @@ public class helicopterMovement : MonoBehaviour
         rigidbody2D = GetComponent<Rigidbody2D>();
         gameStateManager = FindObjectOfType<GameStateManager>();
         flare = GetComponent<ParticleSystem>(); 
+        
         moveAction = PlayerInput.actions.FindAction("Move");
+        moveAction.Enable();
         flareAction = PlayerInput.actions.FindAction("Flare");
+        flareAction.Enable();
         depositAction = PlayerInput.actions.FindAction("Deposit");
+        depositAction.Enable();
         restartAction = PlayerInput.actions.FindAction("Restart");
+        restartAction.Enable(); 
         flareAction.performed += OnFlareAction;
         depositAction.performed += OnDepositAction; 
         restartAction.performed += OnRestartAction;
@@ -54,9 +59,8 @@ public class helicopterMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     { 
-        currentVector = moveAction.ReadValue<Vector2>(); 
-        roterVolume = currentVector.magnitude; 
-        rigidbody2D.AddForce(transform.up * (thurst * currentVector.y));  
+        currentVector = moveAction.ReadValue<Vector2>();  
+        //rigidbody2D.AddForce(transform.up * (thurst * currentVector.y));  
         TiltAngle();     
        
     } 
@@ -67,6 +71,8 @@ public class helicopterMovement : MonoBehaviour
         {
             rigidbody2D.velocity = rigidbody2D.velocity.normalized * maxSpeed;
         }
+        
+        rigidbody2D.AddForce(transform.up * (thurst * currentVector.y) * 15f); 
     }
  
     private void TiltAngle()
@@ -165,10 +171,16 @@ public class helicopterMovement : MonoBehaviour
     }
 
     IEnumerator DeployFlare()
-    { 
+    {
+        currentEffectTime = 0f;
         scrambled = true; 
-        flare.Play();
-        yield return new WaitForSeconds(flareDuration); 
+        flare.Play(); 
+        float duration = flareDuration;
+        while (currentEffectTime < duration)
+        {
+            currentEffectTime += Time.deltaTime;
+            yield return null;
+        }  
         scrambled = false;
     }
     

@@ -8,7 +8,7 @@ public class UiManager : MonoBehaviour
     private UIDocument _uiDocument;
     private VisualElement _base, gameUI, gameOverUI;
     private Label soldiersRescued, soldiersInside, soldiersOutside, flareStatus, resultText;
-    private ProgressBar resultProgressBar;
+    private ProgressBar resultProgressBar, effectBar;
     private Button restartButton, menuButton;
     
     private helicopterMovement helicopterMovement;
@@ -28,6 +28,7 @@ public class UiManager : MonoBehaviour
         soldiersOutside = root.Q<Label>("SOF");
         flareStatus = root.Q<Label>("FlareStatus");
         resultProgressBar = root.Q<ProgressBar>("bar");
+        effectBar = root.Q<ProgressBar>("effectBar");
         gameUI.style.display = DisplayStyle.Flex;
             
         gameOverUI = root.Q<VisualElement>("GameOverUI");
@@ -46,11 +47,17 @@ public class UiManager : MonoBehaviour
         if (helicopterMovement != null )
         {
             soldiersInside.text = $"{helicopterMovement.GetCurrentCapacity()}/{helicopterMovement.GetMaxCapacity()} soldiers inside";
-            resultProgressBar.style.display = helicopterMovement.canDeployFlare ? DisplayStyle.None : DisplayStyle.Flex;
+            //resultProgressBar.style.display = helicopterMovement.canDeployFlare ? DisplayStyle.None : DisplayStyle.Flex;
+            resultProgressBar.title = helicopterMovement.canDeployFlare ?"Flares Ready" : "Recharging Flares...";
+            resultProgressBar.style.color = helicopterMovement.canDeployFlare ? new Color(0, 153, 51, 255) : Color.yellow;
             resultProgressBar.value = helicopterMovement.canDeployFlare ?  helicopterMovement.flareRechargeDuration :  helicopterMovement.currentRechargeTime;
             resultProgressBar.highValue = helicopterMovement.flareRechargeDuration; 
-            flareStatus.text = helicopterMovement.canDeployFlare ? "Flares Ready" : "Recharging Flares...";
-            flareStatus.style.color = helicopterMovement.canDeployFlare ? Color.green : Color.yellow;
+            
+            effectBar.style.display = helicopterMovement.scrambled ? DisplayStyle.Flex : DisplayStyle.None;
+            effectBar.title = helicopterMovement.scrambled ? "scrambling..." : " ";
+            effectBar.value = helicopterMovement.currentEffectTime;
+            effectBar.highValue = helicopterMovement.flareDuration; 
+             
         } 
         
         if (gameStateManager != null )

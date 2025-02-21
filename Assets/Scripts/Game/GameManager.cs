@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
@@ -22,6 +23,7 @@ public class GameStateManager : MonoBehaviour
     private UiManager mainGameUi; 
     private Coroutine coroutine = null;
     private bool playerDead = false;
+    private InputAction restartAction;
 
     private void Awake()
     {
@@ -36,6 +38,10 @@ public class GameStateManager : MonoBehaviour
         player = FindObjectOfType<helicopterMovement>().gameObject;
         playerPos = player.transform.position;
         mainGameUi = FindObjectOfType<UiManager>(); 
+        var playerInput = GetComponent<PlayerInput>();
+        restartAction = playerInput.actions.FindAction("Restart");
+        restartAction.Enable(); 
+        restartAction.performed += OnRestartAction;
     }
 
     private void Update()
@@ -81,6 +87,15 @@ public class GameStateManager : MonoBehaviour
         mainGameUi.GetBase().style.backgroundColor = Color.black;
         mainGameUi.DisplayEndGame();
         mainGameUi.SetEndGameMessage(message);
+    }
+
+    private void OnRestartAction(InputAction.CallbackContext context)
+    {
+        if(playerWon || playerDead)
+        {
+            Time.timeScale = 1f;
+            SceneManager.LoadScene(1);
+        }
     }
      
 }

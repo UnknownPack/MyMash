@@ -7,6 +7,7 @@ using UnityEngine;
 public class AutonomusMissle : MonoBehaviour
 {
     public GameObject explosionPrefab;
+    public float multiplier = 50f;
     private GameObject target {get; set;}
     private float initialLaunch, timeToManeuver, timeToLive, thrust, turnRate, maxSpeed, currentVelocity = 0, lifeClock = 0;
     private bool track = false;
@@ -34,12 +35,12 @@ public class AutonomusMissle : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        currentVelocity += Time.deltaTime * thrust;
-        currentVelocity = Mathf.Clamp(currentVelocity, 0, maxSpeed);
-        lifeClock += Time.deltaTime;
-        rb.AddForce(transform.up * currentVelocity); 
+    { 
+        lifeClock += Time.deltaTime;   
         
+        currentVelocity += Time.deltaTime * thrust;
+        currentVelocity = Mathf.Clamp(currentVelocity, 0, maxSpeed); 
+        rb.AddForce(transform.up * currentVelocity); 
         if(lifeClock >= timeToLive)
         {
             StopCoroutine(trackCoroutine);
@@ -49,6 +50,11 @@ public class AutonomusMissle : MonoBehaviour
         
         if(track && movement!=null && !movement.scrambled)
             trackTarget(target.transform.position);   
+    }
+
+    private void FixedUpdate()
+    { 
+        rb.AddForce(transform.up * currentVelocity * multiplier); 
     }
 
     IEnumerator move()

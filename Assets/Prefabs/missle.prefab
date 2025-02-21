@@ -122,6 +122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosionPrefab: {fileID: 2516338213508696263, guid: a93f8b2ab595dd1419cd4293e326156a, type: 3}
+  multiplier: 35
 --- !u!50 &206912493319621665
 Rigidbody2D:
   serializedVersion: 4

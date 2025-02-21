@@ -14,12 +14,6 @@ public class MainScreenManager : MonoBehaviour
         uiDocument = GetComponent<UIDocument>();
         startButton = uiDocument.rootVisualElement.Q<Button>("startButton");
         startButton.RegisterCallback<ClickEvent>(StartGame);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     } 
 
     private void StartGame(ClickEvent evt)

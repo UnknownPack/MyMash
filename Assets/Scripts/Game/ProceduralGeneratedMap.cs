@@ -35,13 +35,7 @@ public class ProceduralGeneratedMap : MonoBehaviour
         GenerateBase();
         GenerateSoldier();
         GenerateTrees(); 
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    } 
 
     List<Vector2> GenerateList()
     {
@@ -69,7 +63,7 @@ public class ProceduralGeneratedMap : MonoBehaviour
     void GenerateBase()
     { 
         int randomX = Random.Range(-28, -12);
-        int randomY = Random.Range(-18, 18);
+        int randomY = Random.Range(-18, 6);
         Instantiate(BasePrefab, new Vector2(randomX, randomY), Quaternion.identity); 
     }
 
